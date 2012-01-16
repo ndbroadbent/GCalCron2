@@ -27,6 +27,7 @@ See http://www.pfspear.net/projects/gcalcron for his first version.
  * Does not rely on permanent Internet connectivity thanks to the 7-days-ahead scheduling
  * Only the new and modified events are downloaded from Google at each run, for minimal bandwidth and latency
  * Timezone/DST aware, using datetutil.tz.gettz (new since 2012-01-16)
+ * Macro support - use a macro to call a set of tasks & offsets (new since 2012-01-17)
  * Simple settings file in JSON format
  * No Google password stored
  * DocTests! :-)
@@ -81,7 +82,9 @@ For example, to sync every 10 minutes, run `crontab -e`, and add the following l
  * In your Google Calendar, create a single or recurrent event, and list one command per line in the description.
  * Add `+10: ` or `-5: ` at the beginning of the line to add an offset of `+10` minutes or `-5` minutes to the command
  * Add `end: ` or `end -5: ` at the beginning of the line to add an offset relative to the end of the event
- * Example:
+ * Use `macro: < macro_name >` at the beginning of the line to call a macro file
+
+Example:
 
 ```bash
 -60: /usr/bin/python /home/automation/heating_on.py
@@ -89,6 +92,12 @@ For example, to sync every 10 minutes, run `crontab -e`, and add the following l
 -2: /usr/bin/python /home/automation/boiler_off.py
 /usr/bin/php /root/phpdenon/wakeup.php
 end: /usr/bin/python /home/automation/heating_off.py
+```
+
+Or, if all of the above was stored in `~/.gcalcron2/macros/wakeup`:
+
+```bash
+macro: wakeup
 ```
 
 ## Development
