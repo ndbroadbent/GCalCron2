@@ -167,6 +167,19 @@ class GCalAdapter:
     @since 2011-06-13
     """
 
+    # Find & substitute macros
+    for command in event_description.split("\n"):
+      macro_match = re.compile('^macro: (.*)').search(command)
+      if macro_match:
+        macro = macro_match.group(1)
+        macro_file = os.getenv('HOME') + '/.gcalcron2/macros/' + macro
+        try:
+          with open(macro_file) as f:
+            event_description = re.sub("^macro: " + macro, f.read(), event_description)
+        except IOError:
+          pass
+
+
     commands = []
     for command in event_description.split("\n"):
       exec_time = start_time
@@ -204,7 +217,13 @@ class GCalCron2:
   """
 
   settings = None
-  settings_file = os.getenv('HOME') + '/' + '.gcalcron2'
+  settings_file = os.getenv('HOME') + '/.gcalcron2/settings.json'
+
+  # ensure ~/.gcalcron2 exists (with macros subdir)
+  try:
+    os.makedirs(os.getenv('HOME') + '/.gcalcron2/macros')
+  except OSError:
+    pass
 
 
   def __init__(self, load_settings=True):
